@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,7 +7,9 @@ namespace SocialTopology
     public class SocialNetwork
     {
         public List<User> AllUsers { get; private set; }
-        public User CurrentUser { get; private set; } 
+        
+        // переменная может быть null 
+        public User? CurrentUser { get; private set; } 
 
         public SocialNetwork()
         {
@@ -14,40 +17,96 @@ namespace SocialTopology
             CurrentUser = null; 
         }
 
-        public void Register(string login, string password, string name)
+        public bool Register(string login, string password, string name)
         {
+            if (AllUsers.Any(u => u.Login.ToLower() == login.ToLower()))
+            {
+                Console.WriteLine("[-] error: user with this login is exists");
+                return false; 
+            }
+
             AllUsers.Add(new User(login, password, name));
+            Console.WriteLine("[+] register succesfull!");
+            return true;
         }
 
-        public void Login(string login, string password)
+        public bool Login(string login, string password)
         {
-            CurrentUser = AllUsers.FirstOrDefault(u => u.Login == login && u.Password == password);
+            var user = AllUsers.FirstOrDefault(u => u.Login == login && u.Password == password);
+            
+            if (user != null)
+            {
+                CurrentUser = user;
+                Console.WriteLine($"[+] Welcome, {user.Name}!");
+                return true;
+            }
+            
+            Console.WriteLine("[-] error: unvalid login or password");
+            return false;
         }
 
         public void Logout()
         {
             CurrentUser = null;
+            Console.WriteLine("[+] logged out");
         }
 
         public List<User> FindUsersInNetwork(string namePattern)
         {
-            return AllUsers.Where(u => u.Name.ToLower().Contains(namePattern.ToLower())).ToList();
+            if (CurrentUser == null) return new List<User>();
+           
+            return AllUsers
+                .Where(u => u.Name.ToLower().Contains(namePattern.ToLower()) && u.Login != CurrentUser.Login)
+                .ToList();
         }
 
         public void AddFriend(string targetLogin)
         {
+            if (CurrentUser == null) return;
+
             var targetUser = AllUsers.FirstOrDefault(u => u.Login == targetLogin);
             
-            CurrentUser.Friends.Add(targetUser);
-            targetUser.Friends.Add(CurrentUser);
+            if (targetUser == null)
+            {
+                Console.WriteLine("[-] user with this login not found");
+                return;
+            }
+
+            // проверка не добавляем сами себя
+            if (targetUser.Login == CurrentUser.Login)
+            {
+                Console.WriteLine("[-] you can't add yourself as a friend");
+                return;
+            }
+           
+            if (!CurrentUser.Friends.Contains(targetUser))
+            {
+                CurrentUser.Friends.Add(targetUser);
+                targetUser.Friends.Add(CurrentUser);
+                Console.WriteLine($"[+] you and {targetUser.Name} now friends!");
+            }
+            else
+            {
+                Console.WriteLine("[-] this person is already on your friends list");
+            }
         }
 
         public void RemoveFriend(string targetLogin)
         {
+            if (CurrentUser == null) return;
+
             var targetUser = CurrentUser.Friends.FirstOrDefault(u => u.Login == targetLogin);
             
-            CurrentUser.Friends.Remove(targetUser);
-            targetUser.Friends.Remove(CurrentUser);
+            if (targetUser != null)
+            {
+                CurrentUser.Friends.Remove(targetUser);
+                targetUser.Friends.Remove(CurrentUser);
+                Console.WriteLine($"[+] user {targetUser.Name} delete from friends list");
+            }
+            else
+            {
+                Console.WriteLine("[-] this person is not on your friends list");
+            }
         }
 
         public List<User> GetSortedFriends()

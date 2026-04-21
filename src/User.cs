@@ -22,7 +22,7 @@ namespace SocialTopology
 
         public override string ToString()
         {
-            return $"[{Login}] {Name} (друзей: {Friends.Count})";
+            return $"[{Login}] {Name} (friends: {Friends.Count})";
         }
     }
 }
