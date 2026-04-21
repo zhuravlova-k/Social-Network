@@ -5,47 +5,55 @@ namespace SocialTopology
 {
     public class SocialNetwork
     {
-        public List<User> Users { get; private set; }
+        public List<User> AllUsers { get; private set; }
+        public User CurrentUser { get; private set; } 
 
         public SocialNetwork()
         {
-            Users = new List<User>();
+            AllUsers = new List<User>();
+            CurrentUser = null; 
         }
-            
-        public void AddUser(string name)
-        {
-            Users.Add(new User(name));
-        }
-            
-        public void RemoveUser(User user)
-        {
-            foreach (var friend in user.Friends)
-            {
-                friend.Friends.Remove(user);
-            }
 
-            Users.Remove(user);
-        }
-            
-        public void AddFriendship(User u1, User u2)
+        public void Register(string login, string password, string name)
         {
-            if (u1 != u2 && !u1.Friends.Contains(u2))
-            {
-                u1.Friends.Add(u2);
-                u2.Friends.Add(u1);
-            }
+            AllUsers.Add(new User(login, password, name));
         }
-            
-        public List<User> FindUsers(string namePattern, int minFriends)
+
+        public void Login(string login, string password)
         {
-            return Users
-                .Where(u => u.Name.ToLower().Contains(namePattern.ToLower()) && u.Friends.Count >= minFriends)
-                .ToList();
+            CurrentUser = AllUsers.FirstOrDefault(u => u.Login == login && u.Password == password);
         }
-            
-        public List<User> SortByFriendsCount()
+
+        public void Logout()
         {
-            return Users.OrderByDescending(u => u.Friends.Count).ToList();
+            CurrentUser = null;
+        }
+
+        public List<User> FindUsersInNetwork(string namePattern)
+        {
+            return AllUsers.Where(u => u.Name.ToLower().Contains(namePattern.ToLower())).ToList();
+        }
+
+        public void AddFriend(string targetLogin)
+        {
+            var targetUser = AllUsers.FirstOrDefault(u => u.Login == targetLogin);
+            
+            CurrentUser.Friends.Add(targetUser);
+            targetUser.Friends.Add(CurrentUser);
+        }
+
+        public void RemoveFriend(string targetLogin)
+        {
+            var targetUser = CurrentUser.Friends.FirstOrDefault(u => u.Login == targetLogin);
+            
+            CurrentUser.Friends.Remove(targetUser);
+            targetUser.Friends.Remove(CurrentUser);
+        }
+
+        public List<User> GetSortedFriends()
+        {
+            if (CurrentUser == null) return new List<User>();
+            return CurrentUser.Friends.OrderByDescending(u => u.Friends.Count).ToList();
         }
     }
 }

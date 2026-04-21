@@ -6,19 +6,23 @@ namespace SocialTopology
     public class User
     {
         public Guid Id { get; private set; } 
-        public string Name { get; set; }
+        public string Login { get; private set; } 
+        public string Password { get; private set; } 
+        public string Name { get; set; } 
         public List<User> Friends { get; private set; } 
-
-        public User(string name)
+        
+        public User(string login, string password, string name)
         {
             Id = Guid.NewGuid();
+            Login = login;
+            Password = password;
             Name = name;
             Friends = new List<User>();
         }
 
         public override string ToString()
         {
-            return $"[{Id.ToString().Substring(0, 5)}] {Name} (friends: {Friends.Count})";
+            return $"[{Login}] {Name} (друзей: {Friends.Count})";
         }
     }
 }
