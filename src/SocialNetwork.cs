@@ -21,12 +21,12 @@ namespace SocialTopology
         {
             if (AllUsers.Any(u => u.Login.ToLower() == login.ToLower()))
             {
-                Console.WriteLine("[-] error: user with this login is exists");
+                Console.WriteLine("[-] error: user with this login already exists");
                 return false; 
             }
 
             AllUsers.Add(new User(login, password, name));
-            Console.WriteLine("[+] register succesfull!");
+            Console.WriteLine("[+] registration successful");
             return true;
         }
 
@@ -37,11 +37,11 @@ namespace SocialTopology
             if (user != null)
             {
                 CurrentUser = user;
-                Console.WriteLine($"[+] Welcome, {user.Name}!");
+                Console.WriteLine($"[+] welcome, {user.Name}");
                 return true;
             }
             
-            Console.WriteLine("[-] error: unvalid login or password");
+            Console.WriteLine("[-] error: invalid login or password");
             return false;
         }
 
@@ -68,14 +68,14 @@ namespace SocialTopology
             
             if (targetUser == null)
             {
-                Console.WriteLine("[-] user with this login not found");
+                Console.WriteLine("[-] user not found");
                 return;
             }
 
             // проверка не добавляем сами себя
             if (targetUser.Login == CurrentUser.Login)
             {
-                Console.WriteLine("[-] you can't add yourself as a friend");
+                Console.WriteLine("[-] you can't add yourself");
                 return;
             }
            
@@ -83,11 +83,11 @@ namespace SocialTopology
             {
                 CurrentUser.Friends.Add(targetUser);
                 targetUser.Friends.Add(CurrentUser);
-                Console.WriteLine($"[+] you and {targetUser.Name} now friends!");
+                Console.WriteLine($"[+] you and {targetUser.Name} are friends now");
             }
             else
             {
-                Console.WriteLine("[-] this person is already on your friends list");
+                Console.WriteLine("[-] already in your friends list");
             }
         }
 
@@ -101,11 +101,11 @@ namespace SocialTopology
             {
                 CurrentUser.Friends.Remove(targetUser);
                 targetUser.Friends.Remove(CurrentUser);
-                Console.WriteLine($"[+] user {targetUser.Name} delete from friends list");
+                Console.WriteLine($"[+] user {targetUser.Name} removed from friends");
             }
             else
             {
-                Console.WriteLine("[-] this person is not on your friends list");
+                Console.WriteLine("[-] user is not in your friends list");
             }
         }
 
