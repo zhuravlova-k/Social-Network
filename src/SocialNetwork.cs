@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace SocialTopology
 {
@@ -11,10 +14,40 @@ namespace SocialTopology
         // переменная может быть null 
         public User? CurrentUser { get; private set; } 
 
+        private const string FilePath = "data.json";
+
         public SocialNetwork()
         {
             AllUsers = new List<User>();
             CurrentUser = null; 
+            LoadFromFile();
+        }
+
+        private void SaveToFile() {
+            var options = new JsonSerializerOptions 
+            { 
+                // предотвращает бесконечное зацикливание при сохранении
+                // Вместо того чтобы по кругу сохранять друзей программа просто сохраняет ссылки на уже созданные объекты.
+                ReferenceHandler = ReferenceHandler.Preserve,
+                WriteIndented = true 
+            };
+            string json = JsonSerializer.Serialize(AllUsers, options);
+            File.WriteAllText(FilePath, json);
+        }
+
+        private void LoadFromFile() {
+            if (!File.Exists(FilePath)) return;
+
+            string json = File.ReadAllText(FilePath);
+            var options = new JsonSerializerOptions 
+            { 
+                ReferenceHandler = ReferenceHandler.Preserve 
+            };
+            
+            // расшифровываем джсон обратно в список объектов.
+            // оператор ?? — если файл пустой или битый (вернул null),
+            // мы не выдаем ошибку, а просто создаем новый чистый список 
+            AllUsers = JsonSerializer.Deserialize<List<User>>(json, options) ?? new List<User>();
         }
 
         public bool Register(string login, string password, string name)
@@ -83,6 +116,7 @@ namespace SocialTopology
             {
                 CurrentUser.Friends.Add(targetUser);
                 targetUser.Friends.Add(CurrentUser);
+                SaveToFile(); // сохраняем новую связь
                 Console.WriteLine($"[+] you and {targetUser.Name} are friends now");
             }
             else
@@ -101,6 +135,7 @@ namespace SocialTopology
             {
                 CurrentUser.Friends.Remove(targetUser);
                 targetUser.Friends.Remove(CurrentUser);
+                SaveToFile(); // сохраняем удаление связи
                 Console.WriteLine($"[+] user {targetUser.Name} removed from friends");
             }
             else
@@ -124,6 +159,7 @@ namespace SocialTopology
             Console.WriteLine($"[+] account {CurrentUser.Login} permanently deleted");
 
             CurrentUser = null;
+            SaveToFile(); // сохраняем удаление аккаунта
         }
 
         public List<User> GetSortedFriends()
