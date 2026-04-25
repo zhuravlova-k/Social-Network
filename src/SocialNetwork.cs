@@ -109,6 +109,23 @@ namespace SocialTopology
             }
         }
 
+        public void DeleteAccount() {
+            if (CurrentUser == null) return;
+
+            // очищаем связи (ребра) удаляем себя из списков всех наших друзей
+            foreach (var friend in CurrentUser.Friends) 
+            {
+                friend.Friends.Remove(CurrentUser);
+            }
+
+            // удаляем себя из глобальной сети
+            AllUsers.Remove(CurrentUser);
+
+            Console.WriteLine($"[+] account {CurrentUser.Login} permanently deleted");
+
+            CurrentUser = null;
+        }
+
         public List<User> GetSortedFriends()
         {
             if (CurrentUser == null) return new List<User>();

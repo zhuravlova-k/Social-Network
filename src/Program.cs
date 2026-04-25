@@ -99,6 +99,18 @@ namespace SocialTopology
                             network.Logout();
                             break;
                             
+                        case "6":
+                            Console.Write("are you sure? type 'yes' to delete account: ");
+                            if (Console.ReadLine()?.ToLower() == "yes")
+                            {
+                                network.DeleteAccount();
+                            }
+                            else
+                            {
+                                Console.WriteLine("[-] deletion cancelled");
+                            }
+                            break;
+
                         case "0":
                             return;
                             
