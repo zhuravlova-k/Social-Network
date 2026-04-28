@@ -10,7 +10,8 @@ namespace SocialTopology
             
             while (true)
             {
-                
+                Console.Clear();
+
                 if (network.CurrentUser == null)
                 {
                     Console.WriteLine("1. register");
@@ -119,6 +120,8 @@ namespace SocialTopology
                             break;
                     }
                 }
+                Console.WriteLine("\npress Enter to continue...");
+                Console.ReadLine();
             }
         }
     }

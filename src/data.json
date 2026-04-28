@@ -1,0 +1,16 @@
+{
+  "$id": "1",
+  "$values": [
+    {
+      "$id": "2",
+      "Id": "7f2998f1-56f9-4449-92d0-b8b0d9f6fbae",
+      "Login": "vasya",
+      "Password": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
+      "Name": "vasy",
+      "Friends": {
+        "$id": "3",
+        "$values": []
+      }
+    }
+  ]
+}
