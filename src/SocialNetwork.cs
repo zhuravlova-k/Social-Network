@@ -58,6 +58,11 @@ namespace SocialTopology
                 return false; 
             }
 
+            string hashedPassword = SecurityHelper.HashPassword(password);
+            AllUsers.Add(new User(login, hashedPassword, name));
+            
+            SaveToFile();
+
             AllUsers.Add(new User(login, password, name));
             Console.WriteLine("[+] registration successful");
             return true;
@@ -65,7 +70,10 @@ namespace SocialTopology
 
         public bool Login(string login, string password)
         {
-            var user = AllUsers.FirstOrDefault(u => u.Login == login && u.Password == password);
+            string hashedInput = SecurityHelper.HashPassword(password);
+
+            // ищем совпадения логина и именно хеша
+            var user = AllUsers.FirstOrDefault(u => u.Login == login && u.Password == hashedInput);
             
             if (user != null)
             {
