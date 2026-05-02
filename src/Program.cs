@@ -59,6 +59,8 @@ namespace SocialTopology
                     Console.WriteLine("3. add friend");
                     Console.WriteLine("4. remove friend");
                     Console.WriteLine("5. logout");
+                    Console.WriteLine("6. delete account");
+                    Console.WriteLine("7. friend recommendations");
                     Console.WriteLine("0. exit");
                     Console.Write("choose action: ");
                     
@@ -112,6 +114,20 @@ namespace SocialTopology
                             }
                             break;
 
+                        case "7":
+                            var recommendations = network.GetFriendRecommendations();
+                            Console.WriteLine("\n--- people you may know ---");
+                            
+                            if (recommendations.Count == 0) 
+                            {
+                                Console.WriteLine("no recommendations yet. add more friends!");
+                            }
+                            else 
+                            {
+                                foreach (var u in recommendations) Console.WriteLine(u);
+                            }
+                            break;
+                            
                         case "0":
                             return;
                             

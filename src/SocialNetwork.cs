@@ -175,5 +175,42 @@ namespace SocialTopology
             if (CurrentUser == null) return new List<User>();
             return CurrentUser.Friends.OrderByDescending(u => u.Friends.Count).ToList();
         }
+
+        public List<User> GetFriendRecommendations()
+        {
+            if (CurrentUser == null) return new List<User>();
+
+            // лист для подсчета общих друзей: юзер -> колво совпадений
+            var recommendations = new Dictionary<User, int>();
+
+            foreach (var friend in CurrentUser.Friends)
+            {
+                foreach (var friendOfFriend in friend.Friends)
+                {
+                    // пропускаем самого себя и тех, кто уже есть в нашем списке друзей
+                    if (friendOfFriend.Login == CurrentUser.Login || CurrentUser.Friends.Contains(friendOfFriend))
+                    {
+                        continue;
+                    }
+
+                    // считаем общих друзей
+                    if (recommendations.ContainsKey(friendOfFriend))
+                    {
+                        recommendations[friendOfFriend]++;
+                    }
+                    else
+                    {
+                        recommendations[friendOfFriend] = 1;
+                    }
+                }
+            }
+
+            // сортируем по убыванию общих друзей и берем топ-5 рекомендаций
+            return recommendations
+                .OrderByDescending(r => r.Value)
+                .Select(r => r.Key)
+                .Take(5)
+                .ToList();
+        }
     }
 }
