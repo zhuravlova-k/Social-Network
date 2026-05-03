@@ -62,8 +62,6 @@ namespace SocialTopology
             AllUsers.Add(new User(login, hashedPassword, name));
             
             SaveToFile();
-
-            AllUsers.Add(new User(login, password, name));
             Console.WriteLine("[+] registration successful");
             return true;
         }
