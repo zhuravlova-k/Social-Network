@@ -38,16 +38,26 @@ namespace SocialTopology
         private void LoadFromFile() {
             if (!File.Exists(FilePath)) return;
 
-            string json = File.ReadAllText(FilePath);
-            var options = new JsonSerializerOptions 
-            { 
-                ReferenceHandler = ReferenceHandler.Preserve 
-            };
+            try 
+            {
+                string json = File.ReadAllText(FilePath);
+                var options = new JsonSerializerOptions 
+                { 
+                    ReferenceHandler = ReferenceHandler.Preserve 
+                };
             
-            // расшифровываем джсон обратно в список объектов.
-            // оператор ?? — если файл пустой или битый (вернул null),
-            // мы не выдаем ошибку, а просто создаем новый чистый список 
-            AllUsers = JsonSerializer.Deserialize<List<User>>(json, options) ?? new List<User>();
+                // расшифровываем джсон обратно в список объектов.
+                // оператор ?? — если файл пустой или битый (вернул null),
+                // мы не выдаем ошибку, а просто создаем новый чистый список 
+                AllUsers = JsonSerializer.Deserialize<List<User>>(json, options) ?? new List<User>();
+            }
+            catch (Exception ex) 
+            {
+                Console.WriteLine("[-] warning: database file is corrupted. Starting with an empty network.");
+                Console.WriteLine($"[debug] {ex.Message}");
+                AllUsers = new List<User>();
+            }
+            
         }
 
         public bool Register(string login, string password, string name)
