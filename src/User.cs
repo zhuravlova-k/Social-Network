@@ -5,11 +5,16 @@ namespace SocialTopology
 {
     public class User
     {
-        public Guid Id { get; private set; } 
-        public string Login { get; private set; } 
-        public string Password { get; private set; } 
+        public Guid Id { get; set; } 
+        public string Login { get; set; } 
+        public string Password { get; set; } 
         public string Name { get; set; } 
-        public List<User> Friends { get; private set; } 
+        public List<User> Friends { get; set; } 
+
+        public User() 
+        {
+            Friends = new List<User>();
+        }
         
         public User(string login, string password, string name)
         {

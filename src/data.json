@@ -3,7 +3,7 @@
   "$values": [
     {
       "$id": "2",
-      "Id": "1c3aa07f-85cc-4f86-8641-07c0bfa6d2bd",
+      "Id": "7145b75b-1667-41be-9340-181c88644426",
       "Login": "alice",
       "Password": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
       "Name": "Alice",
@@ -12,7 +12,7 @@
         "$values": [
           {
             "$id": "4",
-            "Id": "db690b26-2fc9-422d-a17a-ea71d7bc298f",
+            "Id": "13707443-703d-4297-9a4b-424535d6085c",
             "Login": "bob",
             "Password": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
             "Name": "Bob",
@@ -21,18 +21,33 @@
               "$values": [
                 {
                   "$ref": "2"
+                },
+                {
+                  "$id": "6",
+                  "Id": "eba342fd-fb29-4ea8-a486-86141dd67a82",
+                  "Login": "dave",
+                  "Password": "114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc",
+                  "Name": "Dave",
+                  "Friends": {
+                    "$id": "7",
+                    "$values": [
+                      {
+                        "$ref": "4"
+                      }
+                    ]
+                  }
                 }
               ]
             }
           },
           {
-            "$id": "6",
-            "Id": "f576bb40-c4d8-4761-8da2-109c0a1e3e6e",
+            "$id": "8",
+            "Id": "0f2dc9ed-ca0c-4e8e-8fea-fb49a8246962",
             "Login": "charlie",
             "Password": "8d30c678193105253b548f92bd2e972c39f192ae7cc3af3812c0d7b3bcc6e1ec",
             "Name": "Char",
             "Friends": {
-              "$id": "7",
+              "$id": "9",
               "$values": [
                 {
                   "$ref": "2"
@@ -47,22 +62,14 @@
       "$ref": "4"
     },
     {
+      "$ref": "8"
+    },
+    {
       "$ref": "6"
     },
     {
-      "$id": "8",
-      "Id": "3aab7080-7397-417f-ae11-8ea2bcfe9db4",
-      "Login": "dave",
-      "Password": "114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc",
-      "Name": "Dave",
-      "Friends": {
-        "$id": "9",
-        "$values": []
-      }
-    },
-    {
       "$id": "10",
-      "Id": "6c46ab35-45e7-4984-a7e0-8470314fc069",
+      "Id": "7c2df26e-7cff-4f28-a696-e660fdea1343",
       "Login": "robert",
       "Password": "f8638b979b2f4f793ddb6dbd197e0ee25a7a6ea32b0ae22f5e3c5d119d839e75",
       "Name": "Rob",
