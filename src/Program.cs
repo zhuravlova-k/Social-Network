@@ -27,7 +27,7 @@ namespace SocialTopology
                             Console.Write("enter login: ");
                             var regLogin = Console.ReadLine();
                             Console.Write("enter password: ");
-                            var regPass = Console.ReadLine();
+                            var regPass = ReadPassword();
                             Console.Write("enter your name: ");
                             var regName = Console.ReadLine();
                             
@@ -38,7 +38,7 @@ namespace SocialTopology
                             Console.Write("enter login: ");
                             var login = Console.ReadLine();
                             Console.Write("enter password: ");
-                            var pass = Console.ReadLine();
+                            var pass = ReadPassword();
                             
                             network.Login(login, pass);
                             break;
@@ -139,6 +139,35 @@ namespace SocialTopology
                 Console.WriteLine("\npress Enter to continue...");
                 Console.ReadLine();
             }
+        }
+
+        static string ReadPassword()
+        {
+            string password = "";
+            while (true)
+            {
+                var key = Console.ReadKey(true);
+
+                if (key.Key == ConsoleKey.Enter)
+                {
+                    Console.WriteLine(); // переход на новую строку после enter
+                    break;
+                }
+                else if (key.Key == ConsoleKey.Backspace)
+                {
+                    if (password.Length > 0)
+                    {
+                        password = password.Substring(0, password.Length - 1);
+                        Console.Write("\b \b"); 
+                    }
+                }
+                else if (!char.IsControl(key.KeyChar)) 
+                {
+                    password += key.KeyChar;
+                    Console.Write("*");
+                }
+            }
+            return password;
         }
     }
 }
