@@ -12,130 +12,148 @@ namespace SocialTopology
             {
                 Console.Clear();
 
-                if (network.CurrentUser == null)
+                try 
                 {
-                    Console.WriteLine("1. register");
-                    Console.WriteLine("2. login");
-                    Console.WriteLine("0. exit");
-                    Console.Write("choose action: ");
-                    
-                    var choice = Console.ReadLine();
-
-                    switch (choice)
+                    if (network.CurrentUser == null)
                     {
-                        case "1":
-                            Console.Write("enter login: ");
-                            var regLogin = Console.ReadLine();
-                            Console.Write("enter password: ");
-                            var regPass = ReadPassword();
-                            Console.Write("enter your name: ");
-                            var regName = Console.ReadLine();
-                            
-                            network.Register(regLogin, regPass, regName);
-                            break;
-                            
-                        case "2":
-                            Console.Write("enter login: ");
-                            var login = Console.ReadLine();
-                            Console.Write("enter password: ");
-                            var pass = ReadPassword();
-                            
-                            network.Login(login, pass);
-                            break;
-                            
-                        case "0":
-                            return;
-                            
-                        default:
-                            Console.WriteLine("[-] invalid input");
-                            break;
+                        Console.WriteLine("1. register");
+                        Console.WriteLine("2. login");
+                        Console.WriteLine("0. exit");
+                        Console.Write("choose action: ");
+                        
+                        var choice = Console.ReadLine();
+
+                        switch (choice)
+                        {
+                            case "1":
+                                Console.Write("enter login: ");
+                                var regLogin = Console.ReadLine();
+                                Console.Write("enter password: ");
+                                var regPass = ReadPassword();
+                                Console.Write("enter your name: ");
+                                var regName = Console.ReadLine();
+                                
+                                network.Register(regLogin, regPass, regName);
+                                break;
+                                
+                            case "2":
+                                Console.Write("enter login: ");
+                                var login = Console.ReadLine();
+                                Console.Write("enter password: ");
+                                var pass = ReadPassword();
+                                
+                                network.Login(login, pass);
+                                break;
+                                
+                            case "0":
+                                return;
+                                
+                            default:
+                                Console.WriteLine("[-] invalid input");
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"\n--- profile: {network.CurrentUser.Name} ---");
+                        Console.WriteLine("1. my friends");
+                        Console.WriteLine("2. search users");
+                        Console.WriteLine("3. add friend");
+                        Console.WriteLine("4. remove friend");
+                        Console.WriteLine("5. logout");
+                        Console.WriteLine("6. delete account");
+                        Console.WriteLine("7. friend recommendations");
+                        Console.WriteLine("0. exit");
+                        Console.Write("choose action: ");
+                        
+                        var choice = Console.ReadLine();
+
+                        switch (choice)
+                        {
+                            case "1":
+                                var friends = network.GetSortedFriends();
+                                Console.WriteLine("\n--- my friends ---");
+                                
+                                if (friends.Count == 0) Console.WriteLine("list is empty.");
+                                foreach (var f in friends) Console.WriteLine(f);
+                                break;
+                                
+                            case "2":
+                                Console.Write("enter name to search: ");
+                                var pattern = Console.ReadLine();
+                                var found = network.FindUsersInNetwork(pattern);
+                                
+                                Console.WriteLine("\n--- search results ---");
+                                if (found.Count == 0) Console.WriteLine("no one found.");
+                                foreach (var u in found) Console.WriteLine(u);
+                                break;
+                                
+                            case "3":
+                                Console.Write("enter user login: ");
+                                var addLogin = Console.ReadLine();
+                                network.AddFriend(addLogin);
+                                break;
+                                
+                            case "4":
+                                Console.Write("enter login to remove: ");
+                                var remLogin = Console.ReadLine();
+                                network.RemoveFriend(remLogin);
+                                break;
+                                
+                            case "5":
+                                network.Logout();
+                                break;
+                                
+                            case "6":
+                                Console.Write("are you sure? type 'yes' to delete account: ");
+                                if (Console.ReadLine()?.ToLower() == "yes")
+                                {
+                                    network.DeleteAccount();
+                                }
+                                else
+                                {
+                                    Console.WriteLine("[-] deletion cancelled");
+                                }
+                                break;
+
+                            case "7":
+                                var recommendations = network.GetFriendRecommendations();
+                                Console.WriteLine("\n--- people you may know ---");
+                                
+                                if (recommendations.Count == 0) 
+                                {
+                                    Console.WriteLine("no recommendations yet. add more friends!");
+                                }
+                                else 
+                                {
+                                    foreach (var u in recommendations) Console.WriteLine(u);
+                                }
+                                break;
+                                
+                            case "0":
+                                return;
+                                
+                            default:
+                                Console.WriteLine("[-] invalid input");
+                                break;
+                        }
                     }
                 }
-                else
+                catch (NetworkException ex)
                 {
-                    Console.WriteLine($"\n--- profile: {network.CurrentUser.Name} ---");
-                    Console.WriteLine("1. my friends");
-                    Console.WriteLine("2. search users");
-                    Console.WriteLine("3. add friend");
-                    Console.WriteLine("4. remove friend");
-                    Console.WriteLine("5. logout");
-                    Console.WriteLine("6. delete account");
-                    Console.WriteLine("7. friend recommendations");
-                    Console.WriteLine("0. exit");
-                    Console.Write("choose action: ");
-                    
-                    var choice = Console.ReadLine();
-
-                    switch (choice)
-                    {
-                        case "1":
-                            var friends = network.GetSortedFriends();
-                            Console.WriteLine("\n--- my friends ---");
-                            
-                            if (friends.Count == 0) Console.WriteLine("list is empty.");
-                            foreach (var f in friends) Console.WriteLine(f);
-                            break;
-                            
-                        case "2":
-                            Console.Write("enter name to search: ");
-                            var pattern = Console.ReadLine();
-                            var found = network.FindUsersInNetwork(pattern);
-                            
-                            Console.WriteLine("\n--- search results ---");
-                            if (found.Count == 0) Console.WriteLine("no one found.");
-                            foreach (var u in found) Console.WriteLine(u);
-                            break;
-                            
-                        case "3":
-                            Console.Write("enter user login: ");
-                            var addLogin = Console.ReadLine();
-                            network.AddFriend(addLogin);
-                            break;
-                            
-                        case "4":
-                            Console.Write("enter login to remove: ");
-                            var remLogin = Console.ReadLine();
-                            network.RemoveFriend(remLogin);
-                            break;
-                            
-                        case "5":
-                            network.Logout();
-                            break;
-                            
-                        case "6":
-                            Console.Write("are you sure? type 'yes' to delete account: ");
-                            if (Console.ReadLine()?.ToLower() == "yes")
-                            {
-                                network.DeleteAccount();
-                            }
-                            else
-                            {
-                                Console.WriteLine("[-] deletion cancelled");
-                            }
-                            break;
-
-                        case "7":
-                            var recommendations = network.GetFriendRecommendations();
-                            Console.WriteLine("\n--- people you may know ---");
-                            
-                            if (recommendations.Count == 0) 
-                            {
-                                Console.WriteLine("no recommendations yet. add more friends!");
-                            }
-                            else 
-                            {
-                                foreach (var u in recommendations) Console.WriteLine(u);
-                            }
-                            break;
-                            
-                        case "0":
-                            return;
-                            
-                        default:
-                            Console.WriteLine("[-] invalid input");
-                            break;
-                    }
+                    // ловим наши ошибки
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"[-] error: {ex.Message}");
+                    Console.ResetColor();
                 }
+                catch (Exception ex)
+                {
+                    // непредвиденные системные сбои
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"[-] critical error: {ex.Message}");
+                    Console.ResetColor();
+                }
+
                 Console.WriteLine("\npress Enter to continue...");
                 Console.ReadLine();
             }
@@ -150,7 +168,7 @@ namespace SocialTopology
 
                 if (key.Key == ConsoleKey.Enter)
                 {
-                    Console.WriteLine(); // переход на новую строку после enter
+                    Console.WriteLine(); 
                     break;
                 }
                 else if (key.Key == ConsoleKey.Backspace)

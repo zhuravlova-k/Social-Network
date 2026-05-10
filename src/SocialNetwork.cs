@@ -60,12 +60,12 @@ namespace SocialTopology
             
         }
 
-        public bool Register(string login, string password, string name)
+        public void Register(string login, string password, string name)
         {
             if (AllUsers.Any(u => u.Login.ToLower() == login.ToLower()))
             {
-                Console.WriteLine("[-] error: user with this login already exists");
-                return false; 
+                // викидаємо помилку замість звичайного Console.WriteLine
+                throw new NetworkException("user with this login already exists");
             }
 
             string hashedPassword = SecurityHelper.HashPassword(password);
@@ -73,25 +73,22 @@ namespace SocialTopology
             
             SaveToFile();
             Console.WriteLine("[+] registration successful");
-            return true;
         }
 
-        public bool Login(string login, string password)
+        public void Login(string login, string password)
         {
             string hashedInput = SecurityHelper.HashPassword(password);
-
-            // ищем совпадения логина и именно хеша
             var user = AllUsers.FirstOrDefault(u => u.Login == login && u.Password == hashedInput);
             
             if (user != null)
             {
                 CurrentUser = user;
                 Console.WriteLine($"[+] welcome, {user.Name}");
-                return true;
+                return;
             }
             
-            Console.WriteLine("[-] error: invalid login or password");
-            return false;
+            // наша помилка
+            throw new NetworkException("invalid login or password");
         }
 
         public void Logout()
@@ -116,28 +113,21 @@ namespace SocialTopology
             var targetUser = AllUsers.FirstOrDefault(u => u.Login == targetLogin);
             
             if (targetUser == null)
-            {
-                Console.WriteLine("[-] user not found");
-                return;
-            }
-
-            // проверка не добавляем сами себя
+                throw new NetworkException("user not found");
+            // не добавляем ли сами себя
             if (targetUser.Login == CurrentUser.Login)
-            {
-                Console.WriteLine("[-] you can't add yourself");
-                return;
-            }
+                throw new NetworkException("you can't add yourself");
            
             if (!CurrentUser.Friends.Contains(targetUser))
             {
                 CurrentUser.Friends.Add(targetUser);
                 targetUser.Friends.Add(CurrentUser);
-                SaveToFile(); // сохраняем новую связь
+                SaveToFile(); 
                 Console.WriteLine($"[+] you and {targetUser.Name} are friends now");
             }
             else
             {
-                Console.WriteLine("[-] already in your friends list");
+                throw new NetworkException("already in your friends list");
             }
         }
 
@@ -151,12 +141,12 @@ namespace SocialTopology
             {
                 CurrentUser.Friends.Remove(targetUser);
                 targetUser.Friends.Remove(CurrentUser);
-                SaveToFile(); // сохраняем удаление связи
+                SaveToFile(); 
                 Console.WriteLine($"[+] user {targetUser.Name} removed from friends");
             }
             else
             {
-                Console.WriteLine("[-] user is not in your friends list");
+                throw new NetworkException("user is not in your friends list");
             }
         }
 
