@@ -2,11 +2,11 @@ using System;
 
 namespace SocialTopology
 {
-    public abstract class BaseEntity
+    public abstract class BaseEntity : IDisplayable
     {
         public Guid Id { get; set; }
         
-        public virtual string GetInfo()
+        public abstract string GetInfo()
         {
             return $"Entity ID: {Id}";
         }

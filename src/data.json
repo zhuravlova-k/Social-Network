@@ -3,7 +3,6 @@
   "$values": [
     {
       "$id": "2",
-      "Id": "7145b75b-1667-41be-9340-181c88644426",
       "Login": "alice",
       "Password": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
       "Name": "Alice",
@@ -12,71 +11,131 @@
         "$values": [
           {
             "$id": "4",
-            "Id": "13707443-703d-4297-9a4b-424535d6085c",
-            "Login": "bob",
-            "Password": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
-            "Name": "Bob",
+            "Login": "charlie",
+            "Password": "8d30c678193105253b548f92bd2e972c39f192ae7cc3af3812c0d7b3bcc6e1ec",
+            "Name": "Char",
             "Friends": {
               "$id": "5",
               "$values": [
                 {
                   "$ref": "2"
-                },
-                {
-                  "$id": "6",
-                  "Id": "eba342fd-fb29-4ea8-a486-86141dd67a82",
-                  "Login": "dave",
-                  "Password": "114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc",
-                  "Name": "Dave",
-                  "Friends": {
-                    "$id": "7",
-                    "$values": [
-                      {
-                        "$ref": "4"
-                      }
-                    ]
-                  }
                 }
               ]
-            }
-          },
-          {
-            "$id": "8",
-            "Id": "0f2dc9ed-ca0c-4e8e-8fea-fb49a8246962",
-            "Login": "charlie",
-            "Password": "8d30c678193105253b548f92bd2e972c39f192ae7cc3af3812c0d7b3bcc6e1ec",
-            "Name": "Char",
-            "Friends": {
-              "$id": "9",
-              "$values": [
-                {
-                  "$ref": "2"
-                }
-              ]
-            }
+            },
+            "Profile": {
+              "$id": "6",
+              "Bio": "No bio yet",
+              "RegistrationDate": "2026-05-11T11:13:50.5810355+03:00"
+            },
+            "Id": "0f2dc9ed-ca0c-4e8e-8fea-fb49a8246962"
           }
         ]
-      }
+      },
+      "Profile": {
+        "$id": "7",
+        "Bio": "No bio yet",
+        "RegistrationDate": "2026-05-11T11:13:50.4630221+03:00"
+      },
+      "Id": "7145b75b-1667-41be-9340-181c88644426"
+    },
+    {
+      "$id": "8",
+      "Login": "bob",
+      "Password": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
+      "Name": "Bob",
+      "Friends": {
+        "$id": "9",
+        "$values": [
+          {
+            "$id": "10",
+            "Login": "dave",
+            "Password": "114bd151f8fb0c58642d2170da4ae7d7c57977260ac2cc8905306cab6b2acabc",
+            "Name": "Dave",
+            "Friends": {
+              "$id": "11",
+              "$values": [
+                {
+                  "$ref": "8"
+                }
+              ]
+            },
+            "Profile": {
+              "$id": "12",
+              "Bio": "No bio yet",
+              "RegistrationDate": "2026-05-11T11:13:50.5702579+03:00"
+            },
+            "Id": "eba342fd-fb29-4ea8-a486-86141dd67a82"
+          }
+        ]
+      },
+      "Profile": {
+        "$id": "13",
+        "Bio": "No bio yet",
+        "RegistrationDate": "2026-05-11T11:13:50.5693758+03:00"
+      },
+      "Id": "13707443-703d-4297-9a4b-424535d6085c"
     },
     {
       "$ref": "4"
     },
     {
-      "$ref": "8"
+      "$ref": "10"
     },
     {
-      "$ref": "6"
-    },
-    {
-      "$id": "10",
-      "Id": "7c2df26e-7cff-4f28-a696-e660fdea1343",
+      "$id": "14",
       "Login": "robert",
       "Password": "f8638b979b2f4f793ddb6dbd197e0ee25a7a6ea32b0ae22f5e3c5d119d839e75",
       "Name": "Rob",
       "Friends": {
-        "$id": "11",
+        "$id": "15",
         "$values": []
-      }
+      },
+      "Profile": {
+        "$id": "16",
+        "Bio": "No bio yet",
+        "RegistrationDate": "2026-05-11T11:13:50.5810814+03:00"
+      },
+      "Id": "7c2df26e-7cff-4f28-a696-e660fdea1343"
+    },
+    {
+      "$id": "17",
+      "Login": "25cm",
+      "Password": "5611e6627047d0d44236ea513e1fbd30c9e50ca97f78445cf91dffd074c868a3",
+      "Name": "25cm",
+      "Friends": {
+        "$id": "18",
+        "$values": [
+          {
+            "$id": "19",
+            "Login": "Katya",
+            "Password": "f6e0a1e2ac41945a9aa7ff8a8aaa0cebc12a3bcc981a929ad5cf810a090e11ae",
+            "Name": "Katya",
+            "Friends": {
+              "$id": "20",
+              "$values": [
+                {
+                  "$ref": "17"
+                }
+              ]
+            },
+            "Profile": {
+              "$id": "21",
+              "Bio": "No bio yet",
+              "RegistrationDate": "2026-05-11T11:19:43.44226+03:00"
+            },
+            "Id": "beb0c0e5-cda8-40e9-bf28-0d314d006a0e"
+          }
+        ]
+      },
+      "Profile": {
+        "$id": "22",
+        "Bio": "No bio yet",
+        "RegistrationDate": "2026-05-11T11:17:27.7105715+03:00"
+      },
+      "Id": "b8c1c47e-6d32-438b-974d-74cc8456a4ac"
+    },
+    {
+      "$ref": "19"
     }
   ]
 }
