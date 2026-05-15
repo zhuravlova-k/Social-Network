@@ -114,7 +114,7 @@ namespace SocialTopology
             
             if (targetUser == null)
                 throw new NetworkException("user not found");
-            // не добавляем ли сами себя
+                
             if (targetUser.Login == CurrentUser.Login)
                 throw new NetworkException("you can't add yourself");
            
@@ -165,7 +165,7 @@ namespace SocialTopology
             Console.WriteLine($"[+] account {CurrentUser.Login} permanently deleted");
 
             CurrentUser = null;
-            SaveToFile(); // сохраняем удаление аккаунта
+            SaveToFile(); 
         }
 
         public List<User> GetSortedFriends()
@@ -209,6 +209,35 @@ namespace SocialTopology
                 .Select(r => r.Key)
                 .Take(5)
                 .ToList();
+        }
+        
+        public void EditProfile(string newName, string newBio)
+        {
+            if (CurrentUser == null) return;
+            
+            bool changed = false;
+
+            if (!string.IsNullOrWhiteSpace(newName))
+            {
+                CurrentUser.Name = newName;
+                changed = true;
+            }
+                
+            if (!string.IsNullOrWhiteSpace(newBio))
+            {
+                CurrentUser.Profile.Bio = newBio;
+                changed = true;
+            }
+
+            if (changed)
+            {
+                SaveToFile();
+                Console.WriteLine("[+] profile updated successfully");
+            }
+            else
+            {
+                Console.WriteLine("[-] no changes were made");
+            }
         }
     }
 }

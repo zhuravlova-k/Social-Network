@@ -27,18 +27,18 @@ namespace SocialTopology
                         {
                             case "1":
                                 Console.Write("enter login: ");
-                                var regLogin = Console.ReadLine();
+                                var regLogin = Console.ReadLine() ?? "";
                                 Console.Write("enter password: ");
                                 var regPass = ReadPassword();
                                 Console.Write("enter your name: ");
-                                var regName = Console.ReadLine();
+                                var regName = Console.ReadLine() ?? "";
                                 
                                 network.Register(regLogin, regPass, regName);
                                 break;
                                 
                             case "2":
                                 Console.Write("enter login: ");
-                                var login = Console.ReadLine();
+                                var login = Console.ReadLine() ?? "";
                                 Console.Write("enter password: ");
                                 var pass = ReadPassword();
                                 
@@ -56,13 +56,15 @@ namespace SocialTopology
                     else
                     {
                         Console.WriteLine($"\n--- profile: {network.CurrentUser.Name} ---");
+                        Console.WriteLine($"Bio: {network.CurrentUser.Profile.Bio}");
                         Console.WriteLine("1. my friends");
                         Console.WriteLine("2. search users");
                         Console.WriteLine("3. add friend");
                         Console.WriteLine("4. remove friend");
-                        Console.WriteLine("5. logout");
-                        Console.WriteLine("6. delete account");
-                        Console.WriteLine("7. friend recommendations");
+                        Console.WriteLine("5. edit profile (name & bio)");
+                        Console.WriteLine("6. friend recommendations");
+                        Console.WriteLine("7. logout");
+                        Console.WriteLine("8. delete account");
                         Console.WriteLine("0. exit");
                         Console.Write("choose action: ");
                         
@@ -80,7 +82,7 @@ namespace SocialTopology
                                 
                             case "2":
                                 Console.Write("enter name to search: ");
-                                var pattern = Console.ReadLine();
+                                var pattern = Console.ReadLine() ?? "";
                                 var found = network.FindUsersInNetwork(pattern);
                                 
                                 Console.WriteLine("\n--- search results ---");
@@ -90,33 +92,25 @@ namespace SocialTopology
                                 
                             case "3":
                                 Console.Write("enter user login: ");
-                                var addLogin = Console.ReadLine();
+                                var addLogin = Console.ReadLine() ?? "";
                                 network.AddFriend(addLogin);
                                 break;
                                 
                             case "4":
                                 Console.Write("enter login to remove: ");
-                                var remLogin = Console.ReadLine();
+                                var remLogin = Console.ReadLine() ?? "";
                                 network.RemoveFriend(remLogin);
                                 break;
-                                
+
                             case "5":
-                                network.Logout();
+                                Console.Write("enter new name (leave empty to skip): ");
+                                var newName = Console.ReadLine() ?? "";
+                                Console.Write("enter new bio (leave empty to skip): ");
+                                var newBio = Console.ReadLine() ?? "";
+                                network.EditProfile(newName, newBio);
                                 break;
                                 
                             case "6":
-                                Console.Write("are you sure? type 'yes' to delete account: ");
-                                if (Console.ReadLine()?.ToLower() == "yes")
-                                {
-                                    network.DeleteAccount();
-                                }
-                                else
-                                {
-                                    Console.WriteLine("[-] deletion cancelled");
-                                }
-                                break;
-
-                            case "7":
                                 var recommendations = network.GetFriendRecommendations();
                                 Console.WriteLine("\n--- people you may know ---");
                                 
@@ -130,6 +124,22 @@ namespace SocialTopology
                                 }
                                 break;
                                 
+                            case "7":
+                                network.Logout();
+                                break;
+                                
+                            case "8":
+                                Console.Write("are you sure? type 'yes' to delete account: ");
+                                if ((Console.ReadLine() ?? "").ToLower() == "yes")
+                                {
+                                    network.DeleteAccount();
+                                }
+                                else
+                                {
+                                    Console.WriteLine("[-] deletion cancelled");
+                                }
+                                break;
+
                             case "0":
                                 return;
                                 
