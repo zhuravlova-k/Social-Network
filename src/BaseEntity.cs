@@ -6,9 +6,6 @@ namespace SocialTopology
     {
         public Guid Id { get; set; }
         
-        public abstract string GetInfo()
-        {
-            return $"Entity ID: {Id}";
-        }
+        public abstract string GetInfo();
     }
 }
