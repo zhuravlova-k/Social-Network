@@ -62,9 +62,10 @@ namespace SocialTopology
                         Console.WriteLine("3. add friend");
                         Console.WriteLine("4. remove friend");
                         Console.WriteLine("5. edit profile (name & bio)");
-                        Console.WriteLine("6. friend recommendations");
-                        Console.WriteLine("7. logout");
-                        Console.WriteLine("8. delete account");
+                        Console.WriteLine("6. change password"); 
+                        Console.WriteLine("7. friend recommendations");
+                        Console.WriteLine("8. logout");
+                        Console.WriteLine("9. delete account");
                         Console.WriteLine("0. exit");
                         Console.Write("choose action: ");
                         
@@ -110,7 +111,13 @@ namespace SocialTopology
                                 network.EditProfile(newName, newBio);
                                 break;
                                 
-                            case "6":
+                            case "6": 
+                                Console.Write("enter new password: ");
+                                var newPass = ReadPassword();
+                                network.ChangePassword(newPass);
+                                break;
+                                
+                            case "7":
                                 var recommendations = network.GetFriendRecommendations();
                                 Console.WriteLine("\n--- people you may know ---");
                                 
@@ -124,11 +131,11 @@ namespace SocialTopology
                                 }
                                 break;
                                 
-                            case "7":
+                            case "8": 
                                 network.Logout();
                                 break;
                                 
-                            case "8":
+                            case "9": 
                                 Console.Write("are you sure? type 'yes' to delete account: ");
                                 if ((Console.ReadLine() ?? "").ToLower() == "yes")
                                 {

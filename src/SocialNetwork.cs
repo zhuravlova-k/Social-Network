@@ -239,5 +239,19 @@ namespace SocialTopology
                 Console.WriteLine("[-] no changes were made");
             }
         }
+
+        public void ChangePassword(string newPassword)
+        {
+            if (CurrentUser == null) return;
+            
+            if (string.IsNullOrWhiteSpace(newPassword)) 
+            {
+                throw new NetworkException("password cannot be empty");
+            }
+            
+            CurrentUser.Password = SecurityHelper.HashPassword(newPassword);
+            SaveToFile();
+            Console.WriteLine("[+] password changed successfully");
+        }
     }
 }
