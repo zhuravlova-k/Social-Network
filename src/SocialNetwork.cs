@@ -253,5 +253,14 @@ namespace SocialTopology
             SaveToFile();
             Console.WriteLine("[+] password changed successfully");
         }
+
+        public List<User> FindUsersByFriendCount(int minFriends)
+        {
+            if (CurrentUser == null) return new List<User>();
+            
+            return AllUsers
+                .Where(u => u.Friends.Count >= minFriends && u.Login != CurrentUser.Login)
+                .ToList();
+        }
     }
 }

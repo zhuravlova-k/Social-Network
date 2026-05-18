@@ -58,14 +58,15 @@ namespace SocialTopology
                         Console.WriteLine($"\n--- profile: {network.CurrentUser.Name} ---");
                         Console.WriteLine($"Bio: {network.CurrentUser.Profile.Bio}");
                         Console.WriteLine("1. my friends");
-                        Console.WriteLine("2. search users");
-                        Console.WriteLine("3. add friend");
-                        Console.WriteLine("4. remove friend");
-                        Console.WriteLine("5. edit profile (name & bio)");
-                        Console.WriteLine("6. change password"); 
-                        Console.WriteLine("7. friend recommendations");
-                        Console.WriteLine("8. logout");
-                        Console.WriteLine("9. delete account");
+                        Console.WriteLine("2. search users by name");
+                        Console.WriteLine("3. search users by minimum friends count"); 
+                        Console.WriteLine("4. add friend");
+                        Console.WriteLine("5. remove friend");
+                        Console.WriteLine("6. edit profile (name & bio)");
+                        Console.WriteLine("7. change password");
+                        Console.WriteLine("8. friend recommendations");
+                        Console.WriteLine("9. logout");
+                        Console.WriteLine("10. delete account");
                         Console.WriteLine("0. exit");
                         Console.Write("choose action: ");
                         
@@ -91,33 +92,48 @@ namespace SocialTopology
                                 foreach (var u in found) Console.WriteLine(u);
                                 break;
                                 
-                            case "3":
+                            case "3": // логика поиска друзей
+                                Console.Write("enter minimum number of friends: ");
+                                if (int.TryParse(Console.ReadLine(), out int minFriends))
+                                {
+                                    var byCount = network.FindUsersByFriendCount(minFriends);
+                                    Console.WriteLine("\n--- search results ---");
+                                    if (byCount.Count == 0) Console.WriteLine("no one found.");
+                                    foreach (var u in byCount) Console.WriteLine(u);
+                                }
+                                else
+                                {
+                                    throw new NetworkException("invalid number format");
+                                }
+                                break;
+                                
+                            case "4":
                                 Console.Write("enter user login: ");
                                 var addLogin = Console.ReadLine() ?? "";
                                 network.AddFriend(addLogin);
                                 break;
                                 
-                            case "4":
+                            case "5":
                                 Console.Write("enter login to remove: ");
                                 var remLogin = Console.ReadLine() ?? "";
                                 network.RemoveFriend(remLogin);
                                 break;
 
-                            case "5":
+                            case "6":
                                 Console.Write("enter new name (leave empty to skip): ");
                                 var newName = Console.ReadLine() ?? "";
                                 Console.Write("enter new bio (leave empty to skip): ");
                                 var newBio = Console.ReadLine() ?? "";
                                 network.EditProfile(newName, newBio);
                                 break;
-                                
-                            case "6": 
+
+                            case "7":
                                 Console.Write("enter new password: ");
                                 var newPass = ReadPassword();
                                 network.ChangePassword(newPass);
                                 break;
                                 
-                            case "7":
+                            case "8":
                                 var recommendations = network.GetFriendRecommendations();
                                 Console.WriteLine("\n--- people you may know ---");
                                 
@@ -131,11 +147,11 @@ namespace SocialTopology
                                 }
                                 break;
                                 
-                            case "8": 
+                            case "9":
                                 network.Logout();
                                 break;
                                 
-                            case "9": 
+                            case "10":
                                 Console.Write("are you sure? type 'yes' to delete account: ");
                                 if ((Console.ReadLine() ?? "").ToLower() == "yes")
                                 {
