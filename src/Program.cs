@@ -68,6 +68,13 @@ namespace SocialTopology
                         Console.WriteLine("10. friend recommendations");
                         Console.WriteLine("11. logout");
                         Console.WriteLine("12. delete account");
+                        
+                        // доступен тільки адміну
+                        if (network.CurrentUser is Admin)
+                        {
+                            Console.WriteLine("13. admin panel ");
+                        }
+                        
                         Console.WriteLine("0. exit");
                         Console.Write("choose action: ");
                         
@@ -75,11 +82,11 @@ namespace SocialTopology
 
                         switch (choice)
                         {
-                            case "1": 
+                            case "1":
                                 PrintProfile(network.CurrentUser);
                                 break;
 
-                            case "2": 
+                            case "2":
                                 Console.Write("enter user login: ");
                                 var targetLogin = Console.ReadLine() ?? "";
                                 var targetUser = network.GetUserByLogin(targetLogin);
@@ -164,6 +171,38 @@ namespace SocialTopology
                                     Console.WriteLine("[-] deletion cancelled");
                                 break;
 
+                            case "13": 
+                                if (!(network.CurrentUser is Admin))
+                                {
+                                    Console.WriteLine("[-] invalid input");
+                                    break;
+                                }
+                                Console.Clear();
+                                Console.WriteLine("------------------------");
+                                Console.WriteLine("        ADMIN PANEL             ");
+                                Console.WriteLine("------------------------");
+                                Console.WriteLine("1. view all registered users");
+                                Console.WriteLine("2. forcefully delete user by login");
+                                Console.WriteLine("0. back");
+                                Console.Write("choose admin action: ");
+                                var adminChoice = Console.ReadLine();
+                                
+                                if (adminChoice == "1")
+                                {
+                                    Console.WriteLine("\n--- ALL USERS IN DATABASE ---");
+                                    foreach (var u in network.AllUsers)
+                                    {
+                                        Console.WriteLine(u.GetInfo());
+                                    }
+                                }
+                                else if (adminChoice == "2")
+                                {
+                                    Console.Write("enter user login to FORCE DELETE from network: ");
+                                    var target = Console.ReadLine() ?? "";
+                                    network.ForceDeleteUser(target);
+                                }
+                                break;
+
                             case "0":
                                 return;
                                 
@@ -193,7 +232,6 @@ namespace SocialTopology
             }
         }
 
-        
         static void PrintProfile(User user)
         {
             Console.WriteLine("\n------------------------");

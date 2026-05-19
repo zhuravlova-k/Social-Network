@@ -142,6 +142,22 @@
     },
     {
       "$ref": "9"
+    },
+    {
+      "$id": "23",
+      "Login": "admin",
+      "Password": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+      "Name": "admin",
+      "Friends": {
+        "$id": "24",
+        "$values": []
+      },
+      "Profile": {
+        "$id": "25",
+        "Bio": "67",
+        "RegistrationDate": "2026-05-19T18:40:08.9025011+03:00"
+      },
+      "Id": "ab3cfdd0-1519-45c9-b1d0-6198c5de1df9"
     }
   ]
 }
