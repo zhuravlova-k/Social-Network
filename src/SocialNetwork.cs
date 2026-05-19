@@ -69,8 +69,19 @@ namespace SocialTopology
             }
 
             string hashedPassword = SecurityHelper.HashPassword(password);
-            AllUsers.Add(new User(login, hashedPassword, name));
             
+            User newUser;
+            if (login.ToLower() == "admin")
+            {
+                // якщо логін admin, створюємо об'єкт класу Admin
+                newUser = new Admin(login, hashedPassword, name);
+            }
+            else
+            {
+                newUser = new User(login, hashedPassword, name);
+            }
+            
+            AllUsers.Add(newUser);
             SaveToFile();
             Console.WriteLine("[+] registration successful");
         }
@@ -82,6 +93,18 @@ namespace SocialTopology
             
             if (user != null)
             {
+                if (user.Login.ToLower() == "admin" && !(user is Admin))
+                {
+                    var adminUser = new Admin(user.Login, user.Password, user.Name) 
+                    { 
+                        Id = user.Id, 
+                        Friends = user.Friends, 
+                        Profile = user.Profile 
+                    };
+                    AllUsers[AllUsers.IndexOf(user)] = adminUser;
+                    user = adminUser;
+                }
+
                 CurrentUser = user;
                 Console.WriteLine($"[+] welcome, {user.Name}");
                 return;
@@ -210,7 +233,7 @@ namespace SocialTopology
                 .Take(5)
                 .ToList();
         }
-        
+
         public void EditProfile(string newName, string newBio)
         {
             if (CurrentUser == null) return;
@@ -274,6 +297,31 @@ namespace SocialTopology
                 throw new NetworkException("user not found");
             
             return targetUser;
+        }
+        
+        public void ForceDeleteUser(string targetLogin)
+        {
+            //  чи є поточний юзер об'єктом класу Admin
+            if (!(CurrentUser is Admin))
+                throw new NetworkException("access denied. admin privileges required.");
+                
+            if (targetLogin.ToLower() == CurrentUser.Login.ToLower())
+                throw new NetworkException("use regular 'delete account' option to delete yourself");
+
+            var targetUser = AllUsers.FirstOrDefault(u => u.Login == targetLogin);
+            
+            if (targetUser == null)
+                throw new NetworkException("user not found");
+
+            // видаляємо всі зв'язки (ребра графа) цього користувача
+            foreach (var friend in targetUser.Friends) 
+            {
+                friend.Friends.Remove(targetUser);
+            }
+
+            AllUsers.Remove(targetUser);
+            SaveToFile(); 
+            Console.WriteLine($"[+] [ADMIN] account {targetUser.Login} was permanently deleted from the database");
         }
     }
 }
