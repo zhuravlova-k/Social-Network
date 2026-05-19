@@ -12,12 +12,18 @@ namespace SocialTopology
         public List<User> Friends { get; set; } 
         
         public UserProfile Profile { get; set; }
+        
+        public List<FriendGroup> Groups { get; set; }
 
         public User() 
         {
             Id = Guid.NewGuid();
+            Login = "";
+            Password = "";
+            Name = "";
             Friends = new List<User>();
             Profile = new UserProfile(); 
+            Groups = new List<FriendGroup>();
         }
         
         public User(string login, string password, string name)
@@ -28,11 +34,12 @@ namespace SocialTopology
             Name = name;
             Friends = new List<User>();
             Profile = new UserProfile();
+            Groups = new List<FriendGroup>();
         }
         
         public override string GetInfo()
         {
-            return $"[{Login}] {Name} (friends: {Friends.Count})";
+            return $"[{Login}] {Name} (friends: {Friends.Count}, groups: {Groups.Count})";
         }
 
         public override string ToString()

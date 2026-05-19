@@ -69,10 +69,15 @@ namespace SocialTopology
                         Console.WriteLine("11. logout");
                         Console.WriteLine("12. delete account");
                         
+                        Console.WriteLine("13. create friend group");
+                        Console.WriteLine("14. join friend group");
+                        Console.WriteLine("15. leave friend group");
+                        Console.WriteLine("16. view all available groups");
+                        
                         // доступен тільки адміну
                         if (network.CurrentUser is Admin)
                         {
-                            Console.WriteLine("13. admin panel ");
+                            Console.WriteLine("17. admin panel ");
                         }
                         
                         Console.WriteLine("0. exit");
@@ -171,7 +176,34 @@ namespace SocialTopology
                                     Console.WriteLine("[-] deletion cancelled");
                                 break;
 
-                            case "13": 
+                            case "13":
+                                Console.Write("enter name for new group: ");
+                                var gName = Console.ReadLine() ?? "";
+                                network.CreateGroup(gName);
+                                break;
+
+                            case "14":
+                                Console.Write("enter group name to join: ");
+                                var joinName = Console.ReadLine() ?? "";
+                                network.JoinGroup(joinName);
+                                break;
+
+                            case "15":
+                                Console.Write("enter group name to leave: ");
+                                var leaveName = Console.ReadLine() ?? "";
+                                network.LeaveGroup(leaveName);
+                                break;
+
+                            case "16":
+                                Console.WriteLine("\n--- ALL AVAILABLE GROUPS ---");
+                                if (network.AllGroups.Count == 0) Console.WriteLine("no groups created yet.");
+                                foreach (var group in network.AllGroups)
+                                {
+                                    Console.WriteLine(group.GetInfo());
+                                }
+                                break;
+
+                            case "17": 
                                 if (!(network.CurrentUser is Admin))
                                 {
                                     Console.WriteLine("[-] invalid input");
@@ -238,6 +270,7 @@ namespace SocialTopology
             Console.WriteLine($"PROFILE: [{user.Login}] {user.Name}");
             Console.WriteLine("------------------------");
             Console.WriteLine($"Friends count : {user.Friends.Count}");
+            Console.WriteLine($"Groups count  : {user.Groups.Count}");
             Console.WriteLine($"Registered on : {user.Profile.RegistrationDate:dd.MM.yyyy}");
             Console.WriteLine($"Bio           : {user.Profile.Bio}");
             Console.WriteLine("------------------------\n");

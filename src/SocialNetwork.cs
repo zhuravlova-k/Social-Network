@@ -7,11 +7,17 @@ using System.Text.Json.Serialization;
 
 namespace SocialTopology
 {
+    // Вспомогательный класс-контейнер для сохранения всей структуры в один файл
+    public class NetworkContainer
+    {
+        public List<User> Users { get; set; } = new List<User>();
+        public List<FriendGroup> Groups { get; set; } = new List<FriendGroup>();
+    }
+
     public class SocialNetwork
     {
         public List<User> AllUsers { get; private set; }
-        
-        // переменная может быть null 
+        public List<FriendGroup> AllGroups { get; private set; }
         public User? CurrentUser { get; private set; } 
 
         private const string FilePath = "data.json";
@@ -19,6 +25,7 @@ namespace SocialTopology
         public SocialNetwork()
         {
             AllUsers = new List<User>();
+            AllGroups = new List<FriendGroup>();
             CurrentUser = null; 
             LoadFromFile();
         }
@@ -27,11 +34,17 @@ namespace SocialTopology
             var options = new JsonSerializerOptions 
             { 
                 // предотвращает бесконечное зацикливание при сохранении
-                // Вместо того чтобы по кругу сохранять друзей программа просто сохраняет ссылки на уже созданные объекты.
                 ReferenceHandler = ReferenceHandler.Preserve,
                 WriteIndented = true 
             };
-            string json = JsonSerializer.Serialize(AllUsers, options);
+            
+            var container = new NetworkContainer
+            {
+                Users = AllUsers,
+                Groups = AllGroups
+            };
+
+            string json = JsonSerializer.Serialize(container, options);
             File.WriteAllText(FilePath, json);
         }
 
@@ -46,16 +59,18 @@ namespace SocialTopology
                     ReferenceHandler = ReferenceHandler.Preserve 
                 };
             
-                // расшифровываем джсон обратно в список объектов.
-                // оператор ?? — если файл пустой или битый (вернул null),
-                // мы не выдаем ошибку, а просто создаем новый чистый список 
-                AllUsers = JsonSerializer.Deserialize<List<User>>(json, options) ?? new List<User>();
+                var container = JsonSerializer.Deserialize<NetworkContainer>(json, options);
+                if (container != null)
+                {
+                    AllUsers = container.Users ?? new List<User>();
+                    AllGroups = container.Groups ?? new List<FriendGroup>();
+                }
             }
             catch (Exception ex) 
             {
-                Console.WriteLine("[-] warning: database file is corrupted. Starting with an empty network.");
-                Console.WriteLine($"[debug] {ex.Message}");
+                Console.WriteLine("[-] warning: database file layout updated. Starting with an empty network.");
                 AllUsers = new List<User>();
+                AllGroups = new List<FriendGroup>();
             }
             
         }
@@ -88,8 +103,8 @@ namespace SocialTopology
 
         public void Login(string login, string password)
         {
-            string hashedInput = SecurityHelper.HashPassword(password);
-            var user = AllUsers.FirstOrDefault(u => u.Login == login && u.Password == hashedInput);
+            string hashedPassword = SecurityHelper.HashPassword(password);
+            var user = AllUsers.FirstOrDefault(u => u.Login == login && u.Password == hashedPassword);
             
             if (user != null)
             {
@@ -99,7 +114,8 @@ namespace SocialTopology
                     { 
                         Id = user.Id, 
                         Friends = user.Friends, 
-                        Profile = user.Profile 
+                        Profile = user.Profile,
+                        Groups = user.Groups
                     };
                     AllUsers[AllUsers.IndexOf(user)] = adminUser;
                     user = adminUser;
@@ -182,7 +198,11 @@ namespace SocialTopology
                 friend.Friends.Remove(CurrentUser);
             }
 
-            // удаляем себя из глобальной сети
+            foreach (var group in AllGroups)
+            {
+                group.RemoveMember(CurrentUser);
+            }
+
             AllUsers.Remove(CurrentUser);
 
             Console.WriteLine($"[+] account {CurrentUser.Login} permanently deleted");
@@ -233,7 +253,7 @@ namespace SocialTopology
                 .Take(5)
                 .ToList();
         }
-
+        
         public void EditProfile(string newName, string newBio)
         {
             if (CurrentUser == null) return;
@@ -298,7 +318,7 @@ namespace SocialTopology
             
             return targetUser;
         }
-        
+
         public void ForceDeleteUser(string targetLogin)
         {
             //  чи є поточний юзер об'єктом класу Admin
@@ -319,9 +339,64 @@ namespace SocialTopology
                 friend.Friends.Remove(targetUser);
             }
 
+            foreach (var group in AllGroups)
+            {
+                group.RemoveMember(targetUser);
+            }
+
             AllUsers.Remove(targetUser);
             SaveToFile(); 
-            Console.WriteLine($"[+] [ADMIN] account {targetUser.Login} was permanently deleted from the database");
+            Console.WriteLine($"[+] [ADMIN] account {targetUser.Login} was permanently deleted");
+        }
+
+        // робота з групами
+        public void CreateGroup(string groupName)
+        {
+            if (CurrentUser == null) return;
+            if (string.IsNullOrWhiteSpace(groupName))
+                throw new NetworkException("group name cannot be empty");
+
+            if (AllGroups.Any(g => g.GroupName.ToLower() == groupName.ToLower()))
+                throw new NetworkException("group with this name already exists");
+
+            var newGroup = new FriendGroup(groupName);
+            AllGroups.Add(newGroup);
+            SaveToFile();
+            Console.WriteLine($"[+] group '{groupName}' created successfully");
+        }
+
+        public void JoinGroup(string groupName)
+        {
+            if (CurrentUser == null) return;
+
+            var group = AllGroups.FirstOrDefault(g => g.GroupName.ToLower() == groupName.ToLower());
+            if (group == null)
+                throw new NetworkException("group not found");
+
+            if (group.Members.Contains(CurrentUser))
+                throw new NetworkException("you are already a member of this group");
+
+            group.AddMember(CurrentUser);
+            CurrentUser.Groups.Add(group);
+            SaveToFile();
+            Console.WriteLine($"[+] you successfully joined '{group.GroupName}'");
+        }
+
+        public void LeaveGroup(string groupName)
+        {
+            if (CurrentUser == null) return;
+
+            var group = AllGroups.FirstOrDefault(g => g.GroupName.ToLower() == groupName.ToLower());
+            if (group == null)
+                throw new NetworkException("group not found");
+
+            if (!group.Members.Contains(CurrentUser))
+                throw new NetworkException("you are not a member of this group");
+
+            group.RemoveMember(CurrentUser);
+            CurrentUser.Groups.Remove(group);
+            SaveToFile();
+            Console.WriteLine($"[+] you left the group '{group.GroupName}'");
         }
     }
 }
