@@ -262,5 +262,18 @@ namespace SocialTopology
                 .Where(u => u.Friends.Count >= minFriends && u.Login != CurrentUser.Login)
                 .ToList();
         }
+
+        public User GetUserByLogin(string targetLogin)
+        {
+            if (CurrentUser == null) 
+                throw new NetworkException("unauthorized access");
+            
+            var targetUser = AllUsers.FirstOrDefault(u => u.Login.ToLower() == targetLogin.ToLower());
+            
+            if (targetUser == null)
+                throw new NetworkException("user not found");
+            
+            return targetUser;
+        }
     }
 }
