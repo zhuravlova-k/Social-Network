@@ -10,6 +10,12 @@ namespace SocialTopology
         // юзери існують незалежно від групи
         public List<User> Members { get; set; }
 
+        public FriendGroup() 
+        { 
+            GroupName = ""; 
+            Members = new List<User>(); 
+        }
+
         public FriendGroup(string name)
         {
             Id = Guid.NewGuid();
