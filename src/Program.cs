@@ -73,11 +73,12 @@ namespace SocialTopology
                         Console.WriteLine("14. join friend group");
                         Console.WriteLine("15. leave friend group");
                         Console.WriteLine("16. view all available groups");
+                        Console.WriteLine("17. search groups by minimum members count");
                         
                         // доступен тільки адміну
                         if (network.CurrentUser is Admin)
                         {
-                            Console.WriteLine("17. admin panel ");
+                            Console.WriteLine("18. admin panel ");
                         }
                         
                         Console.WriteLine("0. exit");
@@ -203,7 +204,22 @@ namespace SocialTopology
                                 }
                                 break;
 
-                            case "17": 
+                            case "17":
+                                Console.Write("enter minimum number of members: ");
+                                if (int.TryParse(Console.ReadLine(), out int minMems))
+                                {
+                                    var byMemCount = network.FindGroupsByMemberCount(minMems);
+                                    Console.WriteLine("\n--- search results ---");
+                                    if (byMemCount.Count == 0) Console.WriteLine("no groups found.");
+                                    foreach (var g in byMemCount) Console.WriteLine(g.GetInfo());
+                                }
+                                else
+                                {
+                                    throw new NetworkException("invalid number format");
+                                }
+                                break;
+
+                            case "18": 
                                 if (!(network.CurrentUser is Admin))
                                 {
                                     Console.WriteLine("[-] invalid input");

@@ -306,6 +306,12 @@ namespace SocialTopology
                 .ToList();
         }
 
+        public List<FriendGroup> FindGroupsByMemberCount(int minMembers)
+        {
+            // возвращаем список групп, где колво >= заданному
+            return AllGroups.Where(g => g.Members.Count >= minMembers).ToList();
+        }
+
         public User GetUserByLogin(string targetLogin)
         {
             if (CurrentUser == null) 
