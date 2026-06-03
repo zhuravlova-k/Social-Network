@@ -1,7 +1,10 @@
 # SocialNetwork
 Console social network simulator with graph-based user connections
 
-A console-based social network simulation built with C#.
+![Language](https://img.shields.io/badge/language-C%23-239120?logo=csharp&logoColor=white)
+![Framework](https://img.shields.io/badge/.NET-6.0-512BD4?logo=dotnet&logoColor=white)
+![Storage](https://img.shields.io/badge/storage-JSON-F7DF1E?logo=json&logoColor=black)
+![Security](https://img.shields.io/badge/security-SHA--256-red)
 
 ## Project Overview
 SocialNetwokr is an object-oriented application that models human social interactions using graph theory. It allows users to register, manage profiles, establish mutual friend connections, and join thematic groups. The project demonstrates core software engineering principles, including multi-layered architecture, data serialization, and secure password handling.
