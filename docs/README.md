@@ -11,6 +11,19 @@ SocialNetwokr is an object-oriented application that models human social interac
 
 Built as a university course project, the codebase demonstrates layered OOP architecture, custom exception handling, and secure password storage.
 
+## Architecture
+
+IDisplayable (interface)
+    └── BaseEntity (abstract class)
+            ├── User
+            │     └── Admin          ← inherits all User behaviour + elevated privileges
+            └── FriendGroup
+
+UserProfile                          ← aggregated by User (composition)
+SocialNetwork                        ← orchestrates all business logic
+SecurityHelper                       ← static utility, SHA-256 hashing
+NetworkException                     ← custom exception type
+
 ## Features
 * **User Authentication:** Secure registration and login with SHA-256 password hashing.
 * **Profile Management:** Edit personal biography and display names.
