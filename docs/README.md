@@ -13,6 +13,7 @@ Built as a university course project, the codebase demonstrates layered OOP arch
 
 ## Architecture
 
+```
 IDisplayable (interface)
     └── BaseEntity (abstract class)
             ├── User
@@ -23,6 +24,22 @@ UserProfile                          ← aggregated by User (composition)
 SocialNetwork                        ← orchestrates all business logic
 SecurityHelper                       ← static utility, SHA-256 hashing
 NetworkException                     ← custom exception type
+```
+
+| Class | Role |
+|---|---|
+| `IDisplayable` | Contract: every entity exposes `GetInfo()` |
+| `BaseEntity` | Abstract base; holds `Guid Id` and implements `IDisplayable` |
+| `User` | Core entity: login, hashed password, name, friends list, groups list |
+| `Admin` | Extends `User`; unlocks force-delete and user listing |
+| `UserProfile` | Composition object: bio, registration date |
+| `FriendGroup` | Named community with a member list |
+| `SocialNetwork` | Graph manager: registration, auth, friend/group operations, persistence |
+| `SecurityHelper` | Stateless helper: `HashPassword(string) → string` (SHA-256) |
+| `NetworkException` | Domain-level exception; caught and displayed in red by `Program.cs` |
+
+---
+
 
 ## Features
 * **User Authentication:** Secure registration and login with SHA-256 password hashing.

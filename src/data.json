@@ -42,7 +42,20 @@
                             "$id": "11",
                             "$values": [
                               {
-                                "$ref": "3"
+                                "$id": "12",
+                                "Login": "admin",
+                                "Password": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+                                "Name": "admin",
+                                "Friends": {
+                                  "$ref": "4"
+                                },
+                                "Profile": {
+                                  "$ref": "8"
+                                },
+                                "Groups": {
+                                  "$ref": "9"
+                                },
+                                "Id": "231935df-9143-440e-bd63-9b60d1ca9491"
                               }
                             ]
                           },
@@ -51,22 +64,91 @@
                       ]
                     },
                     "Id": "231935df-9143-440e-bd63-9b60d1ca9491"
+                  },
+                  {
+                    "$id": "13",
+                    "Login": "alex_dev",
+                    "Password": "8ce10e0a994e9e653aa8964892562a799a34b92a6418b4708de96b36bd8b9e34",
+                    "Name": "Alex Mercer",
+                    "Friends": {
+                      "$id": "14",
+                      "$values": [
+                        {
+                          "$id": "15",
+                          "Login": "sarah_smith",
+                          "Password": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
+                          "Name": "Sarah Smith",
+                          "Friends": {
+                            "$id": "16",
+                            "$values": [
+                              {
+                                "$ref": "13"
+                              }
+                            ]
+                          },
+                          "Profile": {
+                            "$id": "17",
+                            "Bio": "No bio yet",
+                            "RegistrationDate": "2026-05-26T10:40:46.8851563+03:00"
+                          },
+                          "Groups": {
+                            "$id": "18",
+                            "$values": [
+                              {
+                                "$id": "19",
+                                "GroupName": "Security Team",
+                                "Members": {
+                                  "$id": "20",
+                                  "$values": [
+                                    {
+                                      "$ref": "13"
+                                    },
+                                    {
+                                      "$ref": "15"
+                                    }
+                                  ]
+                                },
+                                "Id": "7560b4e8-04bb-47f9-9d32-ce1e50156f7b"
+                              }
+                            ]
+                          },
+                          "Id": "cd93dc6b-82e4-43b6-aebd-dff8b2636d26"
+                        },
+                        {
+                          "$ref": "5"
+                        }
+                      ]
+                    },
+                    "Profile": {
+                      "$id": "21",
+                      "Bio": "No bio yet",
+                      "RegistrationDate": "2026-05-26T10:25:47.2839262+03:00"
+                    },
+                    "Groups": {
+                      "$id": "22",
+                      "$values": [
+                        {
+                          "$ref": "19"
+                        }
+                      ]
+                    },
+                    "Id": "e1d211ab-aab6-4029-8323-2cf088cba49c"
                   }
                 ]
               },
               "Profile": {
-                "$id": "12",
+                "$id": "23",
                 "Bio": "No bio yet",
                 "RegistrationDate": "2026-05-19T19:17:34.4889518+03:00"
               },
               "Groups": {
-                "$id": "13",
+                "$id": "24",
                 "$values": [
                   {
-                    "$id": "14",
+                    "$id": "25",
                     "GroupName": "group",
                     "Members": {
-                      "$id": "15",
+                      "$id": "26",
                       "$values": [
                         {
                           "$ref": "5"
@@ -91,17 +173,26 @@
       },
       {
         "$ref": "5"
+      },
+      {
+        "$ref": "13"
+      },
+      {
+        "$ref": "15"
       }
     ]
   },
   "Groups": {
-    "$id": "16",
+    "$id": "27",
     "$values": [
       {
         "$ref": "10"
       },
       {
-        "$ref": "14"
+        "$ref": "25"
+      },
+      {
+        "$ref": "19"
       }
     ]
   }
