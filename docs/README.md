@@ -7,6 +7,12 @@ SocialNetwokr is an object-oriented application that models human social interac
 
 Built as a university course project, the codebase demonstrates layered OOP architecture, custom exception handling, and secure password storage.
 
+## Use Case Diagram
+
+![alt text](image.png)
+
+The system has three actor types: **Guest** (can register and log in), **Authorized User** (full access to social features), and **Administrator** (inherits all user rights plus network management tools).
+
 ## Architecture
 
 ```
