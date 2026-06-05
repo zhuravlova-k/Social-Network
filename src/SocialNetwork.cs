@@ -359,12 +359,12 @@ namespace SocialTopology
 
             var targetUser = AllUsers.FirstOrDefault(u => u.Login.ToLower() == targetLogin.ToLower());
 
-            if (targetUser == null)
+            if (targetUser != null)
             {
-                throw new NetworkException("user not found");
+                return targetUser;
             }
 
-            return targetUser;
+            throw new NetworkException("user not found");
         }
 
         public void ForceDeleteUser(string targetLogin)
@@ -382,25 +382,27 @@ namespace SocialTopology
 
             var targetUser = AllUsers.FirstOrDefault(u => u.Login == targetLogin);
 
-            if (targetUser == null)
+            if (targetUser != null)
+            {
+                // видаляємо всі зв'язки (ребра графа) цього користувача
+                foreach (var friend in targetUser.Friends)
+                {
+                    friend.Friends.Remove(targetUser);
+                }
+
+                foreach (var group in AllGroups)
+                {
+                    group.RemoveMember(targetUser);
+                }
+
+                AllUsers.Remove(targetUser);
+                SaveToFile();
+                Console.WriteLine($"[+] [ADMIN] account {targetUser.Login} was permanently deleted");
+            }
+            else
             {
                 throw new NetworkException("user not found");
             }
-
-            // видаляємо всі зв'язки (ребра графа) цього користувача
-            foreach (var friend in targetUser.Friends)
-            {
-                friend.Friends.Remove(targetUser);
-            }
-
-            foreach (var group in AllGroups)
-            {
-                group.RemoveMember(targetUser);
-            }
-
-            AllUsers.Remove(targetUser);
-            SaveToFile();
-            Console.WriteLine($"[+] [ADMIN] account {targetUser.Login} was permanently deleted");
         }
 
         // робота з групами
@@ -441,16 +443,18 @@ namespace SocialTopology
             {
                 throw new NetworkException("group not found");
             }
-
-            if (group.Members.Contains(CurrentUser))
+            else
             {
-                throw new NetworkException("you are already a member of this group");
-            }
+                if (group.Members.Contains(CurrentUser))
+                {
+                    throw new NetworkException("you are already a member of this group");
+                }
 
-            group.AddMember(CurrentUser);
-            CurrentUser.Groups.Add(group);
-            SaveToFile();
-            Console.WriteLine($"[+] you successfully joined '{group.GroupName}'");
+                group.AddMember(CurrentUser);
+                CurrentUser.Groups.Add(group);
+                SaveToFile();
+                Console.WriteLine($"[+] you successfully joined '{group.GroupName}'");
+            }
         }
 
         public void LeaveGroup(string groupName)
@@ -465,16 +469,18 @@ namespace SocialTopology
             {
                 throw new NetworkException("group not found");
             }
-
-            if (!group.Members.Contains(CurrentUser))
+            else
             {
-                throw new NetworkException("you are not a member of this group");
-            }
+                if (!group.Members.Contains(CurrentUser))
+                {
+                    throw new NetworkException("you are not a member of this group");
+                }
 
-            group.RemoveMember(CurrentUser);
-            CurrentUser.Groups.Remove(group);
-            SaveToFile();
-            Console.WriteLine($"[+] you left the group '{group.GroupName}'");
+                group.RemoveMember(CurrentUser);
+                CurrentUser.Groups.Remove(group);
+                SaveToFile();
+                Console.WriteLine($"[+] you left the group '{group.GroupName}'");
+            }
         }
     }
 }
