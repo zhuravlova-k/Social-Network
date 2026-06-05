@@ -18,7 +18,7 @@ namespace SocialTopology
     {
         public List<User> AllUsers { get; private set; }
         public List<FriendGroup> AllGroups { get; private set; }
-        public User? CurrentUser { get; private set; } 
+        public User? CurrentUser { get; private set; }
 
         private const string FilePath = "data.json";
 
@@ -26,18 +26,19 @@ namespace SocialTopology
         {
             AllUsers = new List<User>();
             AllGroups = new List<FriendGroup>();
-            CurrentUser = null; 
+            CurrentUser = null;
             LoadFromFile();
         }
 
-        private void SaveToFile() {
-            var options = new JsonSerializerOptions 
-            { 
+        private void SaveToFile()
+        {
+            var options = new JsonSerializerOptions
+            {
                 // предотвращает бесконечное зацикливание при сохранении
                 ReferenceHandler = ReferenceHandler.Preserve,
-                WriteIndented = true 
+                WriteIndented = true
             };
-            
+
             var container = new NetworkContainer
             {
                 Users = AllUsers,
@@ -48,17 +49,21 @@ namespace SocialTopology
             File.WriteAllText(FilePath, json);
         }
 
-        private void LoadFromFile() {
-            if (!File.Exists(FilePath)) return;
+        private void LoadFromFile()
+        {
+            if (!File.Exists(FilePath))
+            {
+                return;
+            }
 
-            try 
+            try
             {
                 string json = File.ReadAllText(FilePath);
-                var options = new JsonSerializerOptions 
-                { 
-                    ReferenceHandler = ReferenceHandler.Preserve 
+                var options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve
                 };
-            
+
                 var container = JsonSerializer.Deserialize<NetworkContainer>(json, options);
                 if (container != null)
                 {
@@ -66,13 +71,13 @@ namespace SocialTopology
                     AllGroups = container.Groups ?? new List<FriendGroup>();
                 }
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine("[-] warning: database file layout updated. Starting with an empty network.");
                 AllUsers = new List<User>();
                 AllGroups = new List<FriendGroup>();
             }
-            
+
         }
 
         public void Register(string login, string password, string name)
@@ -84,7 +89,7 @@ namespace SocialTopology
             }
 
             string hashedPassword = SecurityHelper.HashPassword(password);
-            
+
             User newUser;
             if (login.ToLower() == "admin")
             {
@@ -95,7 +100,7 @@ namespace SocialTopology
             {
                 newUser = new User(login, hashedPassword, name);
             }
-            
+
             AllUsers.Add(newUser);
             SaveToFile();
             Console.WriteLine("[+] registration successful");
@@ -105,15 +110,15 @@ namespace SocialTopology
         {
             string hashedPassword = SecurityHelper.HashPassword(password);
             var user = AllUsers.FirstOrDefault(u => u.Login == login && u.Password == hashedPassword);
-            
+
             if (user != null)
             {
                 if (user.Login.ToLower() == "admin" && !(user is Admin))
                 {
-                    var adminUser = new Admin(user.Login, user.Password, user.Name) 
-                    { 
-                        Id = user.Id, 
-                        Friends = user.Friends, 
+                    var adminUser = new Admin(user.Login, user.Password, user.Name)
+                    {
+                        Id = user.Id,
+                        Friends = user.Friends,
                         Profile = user.Profile,
                         Groups = user.Groups
                     };
@@ -125,7 +130,7 @@ namespace SocialTopology
                 Console.WriteLine($"[+] welcome, {user.Name}");
                 return;
             }
-            
+
             // наша помилка
             throw new NetworkException("invalid login or password");
         }
@@ -138,8 +143,11 @@ namespace SocialTopology
 
         public List<User> FindUsersInNetwork(string namePattern)
         {
-            if (CurrentUser == null) return new List<User>();
-           
+            if (CurrentUser == null)
+            {
+                return new List<User>();
+            }
+
             return AllUsers
                 .Where(u => u.Name.ToLower().Contains(namePattern.ToLower()) && u.Login != CurrentUser.Login)
                 .ToList();
@@ -147,21 +155,28 @@ namespace SocialTopology
 
         public void AddFriend(string targetLogin)
         {
-            if (CurrentUser == null) return;
+            if (CurrentUser == null)
+            {
+                return;
+            }
 
             var targetUser = AllUsers.FirstOrDefault(u => u.Login == targetLogin);
-            
+
             if (targetUser == null)
+            {
                 throw new NetworkException("user not found");
-                
+            }
+
             if (targetUser.Login == CurrentUser.Login)
+            {
                 throw new NetworkException("you can't add yourself");
-           
+            }
+
             if (!CurrentUser.Friends.Contains(targetUser))
             {
                 CurrentUser.Friends.Add(targetUser);
                 targetUser.Friends.Add(CurrentUser);
-                SaveToFile(); 
+                SaveToFile();
                 Console.WriteLine($"[+] you and {targetUser.Name} are friends now");
             }
             else
@@ -172,15 +187,18 @@ namespace SocialTopology
 
         public void RemoveFriend(string targetLogin)
         {
-            if (CurrentUser == null) return;
+            if (CurrentUser == null)
+            {
+                return;
+            }
 
             var targetUser = CurrentUser.Friends.FirstOrDefault(u => u.Login == targetLogin);
-            
+
             if (targetUser != null)
             {
                 CurrentUser.Friends.Remove(targetUser);
                 targetUser.Friends.Remove(CurrentUser);
-                SaveToFile(); 
+                SaveToFile();
                 Console.WriteLine($"[+] user {targetUser.Name} removed from friends");
             }
             else
@@ -189,11 +207,15 @@ namespace SocialTopology
             }
         }
 
-        public void DeleteAccount() {
-            if (CurrentUser == null) return;
+        public void DeleteAccount()
+        {
+            if (CurrentUser == null)
+            {
+                return;
+            }
 
             // очищаем связи (ребра) удаляем себя из списков всех наших друзей
-            foreach (var friend in CurrentUser.Friends) 
+            foreach (var friend in CurrentUser.Friends)
             {
                 friend.Friends.Remove(CurrentUser);
             }
@@ -208,18 +230,25 @@ namespace SocialTopology
             Console.WriteLine($"[+] account {CurrentUser.Login} permanently deleted");
 
             CurrentUser = null;
-            SaveToFile(); 
+            SaveToFile();
         }
 
         public List<User> GetSortedFriends()
         {
-            if (CurrentUser == null) return new List<User>();
+            if (CurrentUser == null)
+            {
+                return new List<User>();
+            }
+
             return CurrentUser.Friends.OrderByDescending(u => u.Friends.Count).ToList();
         }
 
         public List<User> GetFriendRecommendations()
         {
-            if (CurrentUser == null) return new List<User>();
+            if (CurrentUser == null)
+            {
+                return new List<User>();
+            }
 
             // лист для подсчета общих друзей: юзер -> колво совпадений
             var recommendations = new Dictionary<User, int>();
@@ -253,11 +282,14 @@ namespace SocialTopology
                 .Take(5)
                 .ToList();
         }
-        
+
         public void EditProfile(string newName, string newBio)
         {
-            if (CurrentUser == null) return;
-            
+            if (CurrentUser == null)
+            {
+                return;
+            }
+
             bool changed = false;
 
             if (!string.IsNullOrWhiteSpace(newName))
@@ -265,7 +297,7 @@ namespace SocialTopology
                 CurrentUser.Name = newName;
                 changed = true;
             }
-                
+
             if (!string.IsNullOrWhiteSpace(newBio))
             {
                 CurrentUser.Profile.Bio = newBio;
@@ -285,13 +317,16 @@ namespace SocialTopology
 
         public void ChangePassword(string newPassword)
         {
-            if (CurrentUser == null) return;
-            
-            if (string.IsNullOrWhiteSpace(newPassword)) 
+            if (CurrentUser == null)
+            {
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(newPassword))
             {
                 throw new NetworkException("password cannot be empty");
             }
-            
+
             CurrentUser.Password = SecurityHelper.HashPassword(newPassword);
             SaveToFile();
             Console.WriteLine("[+] password changed successfully");
@@ -299,8 +334,11 @@ namespace SocialTopology
 
         public List<User> FindUsersByFriendCount(int minFriends)
         {
-            if (CurrentUser == null) return new List<User>();
-            
+            if (CurrentUser == null)
+            {
+                return new List<User>();
+            }
+
             return AllUsers
                 .Where(u => u.Friends.Count >= minFriends && u.Login != CurrentUser.Login)
                 .ToList();
@@ -314,14 +352,18 @@ namespace SocialTopology
 
         public User GetUserByLogin(string targetLogin)
         {
-            if (CurrentUser == null) 
+            if (CurrentUser == null)
+            {
                 throw new NetworkException("unauthorized access");
-            
+            }
+
             var targetUser = AllUsers.FirstOrDefault(u => u.Login.ToLower() == targetLogin.ToLower());
-            
+
             if (targetUser == null)
+            {
                 throw new NetworkException("user not found");
-            
+            }
+
             return targetUser;
         }
 
@@ -329,18 +371,24 @@ namespace SocialTopology
         {
             //  чи є поточний юзер об'єктом класу Admin
             if (!(CurrentUser is Admin))
+            {
                 throw new NetworkException("access denied. admin privileges required.");
-                
+            }
+
             if (targetLogin.ToLower() == CurrentUser.Login.ToLower())
+            {
                 throw new NetworkException("use regular 'delete account' option to delete yourself");
+            }
 
             var targetUser = AllUsers.FirstOrDefault(u => u.Login == targetLogin);
-            
+
             if (targetUser == null)
+            {
                 throw new NetworkException("user not found");
+            }
 
             // видаляємо всі зв'язки (ребра графа) цього користувача
-            foreach (var friend in targetUser.Friends) 
+            foreach (var friend in targetUser.Friends)
             {
                 friend.Friends.Remove(targetUser);
             }
@@ -351,36 +399,53 @@ namespace SocialTopology
             }
 
             AllUsers.Remove(targetUser);
-            SaveToFile(); 
+            SaveToFile();
             Console.WriteLine($"[+] [ADMIN] account {targetUser.Login} was permanently deleted");
         }
 
         // робота з групами
         public void CreateGroup(string groupName)
         {
-            if (CurrentUser == null) return;
+            if (CurrentUser == null)
+            {
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(groupName))
+            {
                 throw new NetworkException("group name cannot be empty");
+            }
 
-            if (AllGroups.Any(g => g.GroupName.ToLower() == groupName.ToLower()))
+            if (!AllGroups.Any(g => g.GroupName.ToLower() == groupName.ToLower()))
+            {
+                var newGroup = new FriendGroup(groupName);
+                AllGroups.Add(newGroup);
+                SaveToFile();
+                Console.WriteLine($"[+] group '{groupName}' created successfully");
+            }
+            else
+            {
                 throw new NetworkException("group with this name already exists");
-
-            var newGroup = new FriendGroup(groupName);
-            AllGroups.Add(newGroup);
-            SaveToFile();
-            Console.WriteLine($"[+] group '{groupName}' created successfully");
+            }
         }
 
         public void JoinGroup(string groupName)
         {
-            if (CurrentUser == null) return;
+            if (CurrentUser == null)
+            {
+                return;
+            }
 
             var group = AllGroups.FirstOrDefault(g => g.GroupName.ToLower() == groupName.ToLower());
             if (group == null)
+            {
                 throw new NetworkException("group not found");
+            }
 
             if (group.Members.Contains(CurrentUser))
+            {
                 throw new NetworkException("you are already a member of this group");
+            }
 
             group.AddMember(CurrentUser);
             CurrentUser.Groups.Add(group);
@@ -390,14 +455,21 @@ namespace SocialTopology
 
         public void LeaveGroup(string groupName)
         {
-            if (CurrentUser == null) return;
+            if (CurrentUser == null)
+            {
+                return;
+            }
 
             var group = AllGroups.FirstOrDefault(g => g.GroupName.ToLower() == groupName.ToLower());
             if (group == null)
+            {
                 throw new NetworkException("group not found");
+            }
 
             if (!group.Members.Contains(CurrentUser))
+            {
                 throw new NetworkException("you are not a member of this group");
+            }
 
             group.RemoveMember(CurrentUser);
             CurrentUser.Groups.Remove(group);

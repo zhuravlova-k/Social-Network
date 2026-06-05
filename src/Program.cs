@@ -7,12 +7,12 @@ namespace SocialTopology
         static void Main(string[] args)
         {
             var network = new SocialNetwork();
-            
+
             while (true)
             {
                 Console.Clear();
 
-                try 
+                try
                 {
                     if (network.CurrentUser == null)
                     {
@@ -20,7 +20,7 @@ namespace SocialTopology
                         Console.WriteLine("2. login");
                         Console.WriteLine("0. exit");
                         Console.Write("choose action: ");
-                        
+
                         var choice = Console.ReadLine();
 
                         switch (choice)
@@ -32,22 +32,22 @@ namespace SocialTopology
                                 var regPass = ReadPassword();
                                 Console.Write("enter your name: ");
                                 var regName = Console.ReadLine() ?? "";
-                                
+
                                 network.Register(regLogin, regPass, regName);
                                 break;
-                                
+
                             case "2":
                                 Console.Write("enter login: ");
                                 var login = Console.ReadLine() ?? "";
                                 Console.Write("enter password: ");
                                 var pass = ReadPassword();
-                                
+
                                 network.Login(login, pass);
                                 break;
-                                
+
                             case "0":
                                 return;
-                                
+
                             default:
                                 Console.WriteLine("[-] invalid input");
                                 break;
@@ -60,7 +60,7 @@ namespace SocialTopology
                         Console.WriteLine("2. view user profile (by login)");
                         Console.WriteLine("3. my friends");
                         Console.WriteLine("4. search users by name");
-                        Console.WriteLine("5. search users by minimum friends count"); 
+                        Console.WriteLine("5. search users by minimum friends count");
                         Console.WriteLine("6. add friend");
                         Console.WriteLine("7. remove friend");
                         Console.WriteLine("8. edit profile (name & bio)");
@@ -68,22 +68,22 @@ namespace SocialTopology
                         Console.WriteLine("10. friend recommendations");
                         Console.WriteLine("11. logout");
                         Console.WriteLine("12. delete account");
-                        
+
                         Console.WriteLine("13. create friend group");
                         Console.WriteLine("14. join friend group");
                         Console.WriteLine("15. leave friend group");
                         Console.WriteLine("16. view all available groups");
                         Console.WriteLine("17. search groups by minimum members count");
-                        
+
                         // доступен тільки адміну
                         if (network.CurrentUser is Admin)
                         {
                             Console.WriteLine("18. admin panel ");
                         }
-                        
+
                         Console.WriteLine("0. exit");
                         Console.Write("choose action: ");
-                        
+
                         var choice = Console.ReadLine();
 
                         switch (choice)
@@ -102,40 +102,63 @@ namespace SocialTopology
                             case "3":
                                 var friends = network.GetSortedFriends();
                                 Console.WriteLine("\n--- my friends ---");
-                                if (friends.Count == 0) Console.WriteLine("list is empty.");
-                                foreach (var f in friends) Console.WriteLine(f);
+                                if (friends.Count == 0)
+                                {
+                                    Console.WriteLine("list is empty.");
+                                }
+
+                                foreach (var f in friends)
+                                {
+                                    Console.WriteLine(f);
+                                }
+
                                 break;
-                                
+
                             case "4":
                                 Console.Write("enter name to search: ");
                                 var pattern = Console.ReadLine() ?? "";
                                 var found = network.FindUsersInNetwork(pattern);
                                 Console.WriteLine("\n--- search results ---");
-                                if (found.Count == 0) Console.WriteLine("no one found.");
-                                foreach (var u in found) Console.WriteLine(u);
+                                if (found.Count == 0)
+                                {
+                                    Console.WriteLine("no one found.");
+                                }
+
+                                foreach (var u in found)
+                                {
+                                    Console.WriteLine(u);
+                                }
+
                                 break;
-                                
-                            case "5": 
+
+                            case "5":
                                 Console.Write("enter minimum number of friends: ");
                                 if (int.TryParse(Console.ReadLine(), out int minFriends))
                                 {
                                     var byCount = network.FindUsersByFriendCount(minFriends);
                                     Console.WriteLine("\n--- search results ---");
-                                    if (byCount.Count == 0) Console.WriteLine("no one found.");
-                                    foreach (var u in byCount) Console.WriteLine(u);
+                                    if (byCount.Count == 0)
+                                    {
+                                        Console.WriteLine("no one found.");
+                                    }
+
+                                    foreach (var u in byCount)
+                                    {
+                                        Console.WriteLine(u);
+                                    }
                                 }
                                 else
                                 {
                                     throw new NetworkException("invalid number format");
                                 }
                                 break;
-                                
+
                             case "6":
                                 Console.Write("enter user login: ");
                                 var addLogin = Console.ReadLine() ?? "";
                                 network.AddFriend(addLogin);
                                 break;
-                                
+
                             case "7":
                                 Console.Write("enter login to remove: ");
                                 var remLogin = Console.ReadLine() ?? "";
@@ -155,26 +178,39 @@ namespace SocialTopology
                                 var newPass = ReadPassword();
                                 network.ChangePassword(newPass);
                                 break;
-                                
+
                             case "10":
                                 var recommendations = network.GetFriendRecommendations();
                                 Console.WriteLine("\n--- people you may know ---");
-                                if (recommendations.Count == 0) 
+                                if (recommendations.Count == 0)
+                                {
                                     Console.WriteLine("no recommendations yet. add more friends!");
-                                else 
-                                    foreach (var u in recommendations) Console.WriteLine(u);
+                                }
+                                else
+                                {
+                                    foreach (var u in recommendations)
+                                    {
+                                        Console.WriteLine(u);
+                                    }
+                                }
+
                                 break;
-                                
+
                             case "11":
                                 network.Logout();
                                 break;
-                                
+
                             case "12":
                                 Console.Write("are you sure? type 'yes' to delete account: ");
                                 if ((Console.ReadLine() ?? "").ToLower() == "yes")
+                                {
                                     network.DeleteAccount();
+                                }
                                 else
+                                {
                                     Console.WriteLine("[-] deletion cancelled");
+                                }
+
                                 break;
 
                             case "13":
@@ -197,7 +233,11 @@ namespace SocialTopology
 
                             case "16":
                                 Console.WriteLine("\n--- ALL AVAILABLE GROUPS ---");
-                                if (network.AllGroups.Count == 0) Console.WriteLine("no groups created yet.");
+                                if (network.AllGroups.Count == 0)
+                                {
+                                    Console.WriteLine("no groups created yet.");
+                                }
+
                                 foreach (var group in network.AllGroups)
                                 {
                                     Console.WriteLine(group.GetInfo());
@@ -210,8 +250,15 @@ namespace SocialTopology
                                 {
                                     var byMemCount = network.FindGroupsByMemberCount(minMems);
                                     Console.WriteLine("\n--- search results ---");
-                                    if (byMemCount.Count == 0) Console.WriteLine("no groups found.");
-                                    foreach (var g in byMemCount) Console.WriteLine(g.GetInfo());
+                                    if (byMemCount.Count == 0)
+                                    {
+                                        Console.WriteLine("no groups found.");
+                                    }
+
+                                    foreach (var g in byMemCount)
+                                    {
+                                        Console.WriteLine(g.GetInfo());
+                                    }
                                 }
                                 else
                                 {
@@ -219,7 +266,7 @@ namespace SocialTopology
                                 }
                                 break;
 
-                            case "18": 
+                            case "18":
                                 if (!(network.CurrentUser is Admin))
                                 {
                                     Console.WriteLine("[-] invalid input");
@@ -234,7 +281,7 @@ namespace SocialTopology
                                 Console.WriteLine("0. back");
                                 Console.Write("choose admin action: ");
                                 var adminChoice = Console.ReadLine();
-                                
+
                                 if (adminChoice == "1")
                                 {
                                     Console.WriteLine("\n--- ALL USERS IN DATABASE ---");
@@ -253,7 +300,7 @@ namespace SocialTopology
 
                             case "0":
                                 return;
-                                
+
                             default:
                                 Console.WriteLine("[-] invalid input");
                                 break;
@@ -301,7 +348,7 @@ namespace SocialTopology
 
                 if (key.Key == ConsoleKey.Enter)
                 {
-                    Console.WriteLine(); 
+                    Console.WriteLine();
                     break;
                 }
                 else if (key.Key == ConsoleKey.Backspace)
@@ -309,10 +356,10 @@ namespace SocialTopology
                     if (password.Length > 0)
                     {
                         password = password.Substring(0, password.Length - 1);
-                        Console.Write("\b \b"); 
+                        Console.Write("\b \b");
                     }
                 }
-                else if (!char.IsControl(key.KeyChar)) 
+                else if (!char.IsControl(key.KeyChar))
                 {
                     password += key.KeyChar;
                     Console.Write("*");
